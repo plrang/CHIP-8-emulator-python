@@ -7,7 +7,7 @@ In a few words, the CHIP 8 is the simplest public emulator you could try to recr
 
 This is the Windows version, easy to convert to Linux. It's proven to work. I will upload also the Linux version soon.
 There will be also the Python 3.x version available and Blender 3D script to run it in the 3D environment.
-There is a lot of comments from me and from the documentation in the code. A live console output is available for the emulator, pseudo assembler display, registers etc.
+You'll find a lot of comments from me and from the documentation right in the script. A live console output is available for the emulator, pseudo assembler display, registers etc.
 
 You may want to read also the introduction in the script 'chip8emu.py' file for more tips.
 
@@ -17,8 +17,7 @@ Download or clone the files. The "ROMs" directory contains the public domain ROM
 If you want to try other ROM files, just put them inside the folder and add to the script source.
 
 <b>Enter the command to run the emulator</b>
-<pre><code>
- 	chip8emu.py
-</code></pre>
+
+<pre><code>chip8emu.py</code></pre>
 
 Use up and down arrows to switch the ROM in realtime. Use the numeric keypad keys to TRY TO PLAY, cause it's not se easy.
