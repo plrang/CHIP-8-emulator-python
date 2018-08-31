@@ -3,6 +3,10 @@
 
 Watch the video, read more and get the documentation https://plrang.com/blog/chip8-emulator-making/
 
+<pre><code># This is a working emulator, in that sense it's finished,
+# yet the code architecture, formatting , comments
+# and some other planned functionalities are not yet in place</code></pre>
+
 In a few words, the CHIP 8 is the simplest public emulator you could try to recreate if you want to begin your journey with emulators, or just to know how does emulator/interpreter work. In fact the CHIP 8 never was a real device, just a virtual concept. Yet every device starts in a such way. So it's the best way to start.
 
 This is the Windows version, easy to convert to Linux. It's proven to work. I will upload also the Linux version soon.
