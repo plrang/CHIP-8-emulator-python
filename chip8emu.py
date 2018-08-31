@@ -44,10 +44,11 @@ from time import time, sleep
 from pprint import pprint
 import collections
 
-import colorama             # USED for that F... screen CLEAR
-from pygame.constants import K_SPACE, K_RETURN
-colorama.init()
 
+from pygame.constants import K_SPACE, K_RETURN
+import colorama             # USED for that F... screen CLEAR
+
+colorama.init()
 
 import winsound
 Freq = 3500  # Set Frequency To 2500 Hertz
@@ -58,7 +59,6 @@ import sys
 print "Native byteorder: ", sys.byteorder
 
 import logging
-
 logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s - %(message)s')  # %(asctime)s
 
@@ -68,6 +68,8 @@ logger.setLevel(logging.CRITICAL)
 # logger.setLevel(logging.DEBUG)
 # logger.setLevel(logging.INFO)
 logger.setLevel(logging.WARN)
+
+
 
 
 # Center the app window on the Desktop
@@ -115,16 +117,24 @@ clock = pygame.time.Clock()
 pygame.key.set_repeat(2000, 2000)
 
 
-# CHIP8 definition
 
+# CHIP8 definition
 
 # 16 - total number of registers in the CHIP8
 REGISTERS_NUM = 0x10
 FPS = 200
-TEST_VRAM = False
-CONSOLE_CLS = False
-CONSOLE_DEBUG_SCREEN = True
-CONSOLE_DEBUG_MSG = False
+
+# TODO: something got wrong here, 
+# need to fix the console display when TEST_VRAM = True
+
+
+# Set all to [False] for better performance
+
+TEST_VRAM = False               # show the "video" output in the console
+CONSOLE_CLS = False              # clear console screen before each cycle - fe. to keep it steady in place. In the main loop there are also a few instruction switches
+CONSOLE_DEBUG_SCREEN = False    # live debugger in the console 
+CONSOLE_DEBUG_MSG = False       # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
+
 
 CLS_BG = (128, 128, 128)
 COL_FG = (160, 255, 160)
@@ -174,89 +184,13 @@ KEY_MAP = {
 }
 
 key_down = 0
-
-#ROM_filename = "ROMbiskwit/hello.ch8";FPS=0
-#ROM_filename = "ROMbiskwit/hanoi.ch8";FPS=0
-#ROM_filename = "ROMbiskwit/starfield.ch8";FPS=0
-
-
-#ROM_filename = "ROMs/AnimalRace.ch8";FPS=700
-
-#ROM_filename = "ROMs/Minimalgame.ch8"
-#ROM_filename = "ROMs/LunarLander.ch8";FPS=600
-#ROM_filename = "ROMs/Connect4.ch8"
-#ROM_filename = "ROMs/Life.ch8"
-
-
-#ROM_filename = "ROMs/Figures.ch8";FPS=500
-#ROM_filename = "ROMs/Tetris.ch8";FPS=100
-#ROM_filename = "ROMs/Blitz.ch8";FPS=200
-#ROM_filename = "ROMs/Stars.ch8"
-#ROM_filename = "ROMs/Clock.ch8"
-#ROM_filename = "ROMs/KeypadTest.ch8"
-
-
-# OK
-
-ROM_filename = "ROMs/Tank"
-FPS = 300
-
-#ROM_filename = "ROMs/Tron.ch8"
-#ROM_filename = "ROMs/X-Mirror.ch8"
-#ROM_filename = "ROMs/ParticleDemo.ch8";FPS=0
-
-#ROM_filename = "ROMs/WormV4.ch8";FPS=100
-#ROM_filename = "ROMs/MostDangerous.ch8"
-#ROM_filename = "ROMs/Missile";FPS=300
-#ROM_filename = "ROMs/SequenceShoot.ch8"
-
-#ROM_filename = "ROMs/Pong2";FPS=500
-#ROM_filename = "ROMs/Pong.ch8"
-#ROM_filename = "ROMs/Paddles.ch8";FPS=600
-#ROM_filename = "ROMs/Merlin.ch8"
-#ROM_filename = "ROMs/Bowling.ch8";FPS=200
-
-#ROM_filename = "ROMs/Blinky.ch8";FPS=700
-
-#ROM_filename = "ROMs/Breakout.ch8";FPS=700
-#ROM_filename = "ROMs/Airplane.ch8";FPS=500
-
-#ROM_filename = "ROMs/Invaders.ch8";FPS=500
-
-#ROM_filename = "ROMs/Brix.ch8";FPS=460
-#ROM_filename = "ROMs/Ufo";FPS=400
-#ROM_filename = "ROMs/Craps.ch8"
-#ROM_filename = "ROMs/Maze.ch8";FPS=0
-
-#ROM_filename = "ROMs/Wall.ch8";FPS=300
-#ROM_filename = "ROMs/Chip8Picture.ch8"
-#ROM_filename = "ROMs/Cave.ch8"
-#ROM_filename = "ROMs/IBMLogo.ch8"
-#ROM_filename = "ROMs/ZeroDemo.ch8";FPS=900
-#ROM_filename = "ROMs/Sierpinski.ch8";FPS=0
-#ROM_filename = "ROMs/Trip8.ch8";FPS=1100
-#ROM_filename = "ROMs/Timebomb.ch8";FPS=0
-
-
-#ROM_filename = "ROMs/Soccer.ch8";FPS=120
-ROM_filename = "ROMs/Submarine.ch8"
-FPS = 300
-#ROM_filename = "ROMs/Astrododge.ch8";FPS=500
-#ROM_filename = "ROMs/Tapeworm.ch8"
-#ROM_filename = "ROMs/Tictac"
-
-#ROM_filename = "ROMs/RushHour.ch8";FPS=400
-#ROM_filename = "ROMs/15Puzzle.ch8";FPS=800
-
-#ROM_filename = "ROMs/Kaleid.ch8"
-#ROM_filename = "ROMs/Syzygy.ch8"
-#ROM_filename = "ROMs/Wipeoff.ch8"
-#ROM_filename = "ROMs/Deflection.ch8"
-
-
 ROMs = collections.OrderedDict()
 
 ROMs = {
+    "ROMs/ZeroDemo.ch8": 1100,
+    "ROMs/Sierpinski.ch8": 0,
+    "ROMs/Trip8.ch8": 1100,
+
     "ROMs/LunarLander.ch8": 600,
     # "ROMbisqwit/hello.ch8": 0,
     # "ROMbisqwit/hanoi.ch8": 0,
@@ -284,20 +218,20 @@ ROMs = {
     "ROMs/Missile": 300,
     "ROMs/SequenceShoot.ch8": 300,
 
+    "ROMs/Blinky.ch8": 100,
+
     "ROMs/Pong2": 500,
     "ROMs/Pong.ch8": 300,
     "ROMs/Paddles.ch8": 600,
     "ROMs/Merlin.ch8": 300,
     "ROMs/Bowling.ch8": 200,
 
-    "ROMs/Blinky.ch8": 700,
-
     "ROMs/Breakout.ch8": 700,
     "ROMs/Airplane.ch8": 500,
 
     "ROMs/Invaders.ch8": 600,
 
-    "ROMs/Brix.ch8": 500,
+    "ROMs/Brix.ch8": 200,
     "ROMs/Ufo": 400,
     "ROMs/Craps.ch8": 300,
     "ROMs/Maze.ch8": 0,
@@ -305,9 +239,7 @@ ROMs = {
     "ROMs/Chip8Picture.ch8": 300,
     "ROMs/Cave.ch8": 200,
     "ROMs/IBMLogo.ch8": 300,
-    "ROMs/ZeroDemo.ch8": 1100,
-    "ROMs/Sierpinski.ch8": 0,
-    "ROMs/Trip8.ch8": 1100,
+    
     "ROMs/Timebomb.ch8": 0,
 
     "ROMs/Soccer.ch8": 600,
@@ -326,10 +258,16 @@ ROMs = {
     "ROMs/Deflection.ch8": 300
 }
 
-ROM_filename = ROMs.keys()[4]
-ROM_FPS = ROMs.values()[0]
 
-FPS = ROM_FPS
+# Select the first ROM to start
+# TODO: fix the weird order
+
+ROM_index = 32
+ROM_filename = ROMs.keys()[ROM_index]
+ROM_FPS = ROMs.values()[ROM_index]
+
+# TODO: make the conditional FPS override valid after switching ROMs 
+FPS = ROM_FPS   # initial
 
 
 """
@@ -555,6 +493,7 @@ class chip8CPU(object):
         else:
             response = ''
 
+
         # DISPLAY VRAM in CONSOLE - for testing
 
         if TEST_VRAM:
@@ -578,6 +517,8 @@ class chip8CPU(object):
             response = ' OP:' + str(hex(self.opcode)) + ' : ' + self.opc_mnemo
 
         return response
+
+
 
     # RUN CYCLE
 
@@ -620,6 +561,7 @@ class chip8CPU(object):
             print self
 
         self.PC += 2
+
 
     # OPCODEs DECODE & EXECUTE
 
@@ -1244,32 +1186,32 @@ class chip8CPU(object):
             self.V[i] = self.memory[(self.I + i) & 0xFFF]
 
 
-# START the action
-# CREATE CPU
 
+
+# START the action
+# CREATE the CPU
 
 chip8CPU = chip8CPU()
 
-# Initialize system and load the game
+# Initialize the system and load the game
 
 chip8CPU.initialize()
-
 
 chip8CPU.ROMload(ROM_filename)
 
 logger.warn('chip8CPU start...')
 
-
 #print '\a'
 
 winsound.Beep(Freq, Dur)
-print("\033[2J\033[1;1f")   # CLS
+print("\033[2J\033[1;1f")    # CLS
 pxarray[:, :] = CLS_BG       # CLS pygame
+
 
 
 # MAIN LOOP as long as done == False
 done = False
-ROM_index = 0
+#ROM_index = 0
 status_printing = True
 
 
@@ -1293,10 +1235,14 @@ def status_print():
 while not done:
 
     if CONSOLE_CLS:
+        
         # USED for that F... screen CLEAR!
-        print("\033[2J\033[1;1f")
-        # os.system('cls')  # for Windows
-        # os.system('clear')  # for Linux/OS X
+        # different ways to clear the console
+
+        # print("\033[2J\033[1;1f")         # this instr. instead of the one below worked better on Win 8
+                                            # try to uncomment it and comment the one below [] os.system('cls') ], to compare                    
+        os.system('cls')        # for Windows
+        # os.system('clear')    # for Linux/OS X
 
     # Virtual screen array
     pxarray = pygame.PixelArray(app_screen)
@@ -1336,11 +1282,12 @@ while not done:
             if key_down == pygame.K_DOWN or key_down == pygame.K_UP:
 
                 print("\033[2J\033[1;1f")   # CLS
-                pxarray[:, :] = CLS_BG       # CLS pygame
+                pxarray[:, :] = CLS_BG      # CLS pygame
 
                 ROM_filename = ROMs.keys()[ROM_index]
                 ROM_FPS = ROMs.values()[ROM_index]
                 FPS = ROM_FPS
+
 
                 chip8CPU.initialize()
                 chip8CPU.ROMload(ROM_filename)
