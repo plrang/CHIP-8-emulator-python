@@ -258,9 +258,9 @@ ROMs = collections.OrderedDict()
 
 ROMs = {
     "ROMs/LunarLander.ch8": 600,
-    "ROMbisqwit/hello.ch8": 0,
-    "ROMbisqwit/hanoi.ch8": 0,
-    "ROMbisqwit/starfield.ch8": 0,
+    # "ROMbisqwit/hello.ch8": 0,
+    # "ROMbisqwit/hanoi.ch8": 0,
+    # "ROMbisqwit/starfield.ch8": 0,
     "ROMs/AnimalRace.ch8": 700,
     "ROMs/Minimalgame.ch8": 300,
     "ROMs/Connect4.ch8": 300,
