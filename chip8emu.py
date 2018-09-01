@@ -93,8 +93,9 @@ device_screen_in_pixels = display_width, display_height
 
 
 # Set the height and width of the whole display
-screen_scale = 9
-screen_status_h = 96
+
+screen_scale = 9        # scale the Pygame display
+screen_status_h = 96    # status field height
 
 app_display_width = display_width * screen_scale
 app_display_height = display_height * screen_scale + screen_status_h
@@ -118,11 +119,14 @@ pygame.key.set_repeat(2000, 2000)
 
 
 
+
+
+
 # CHIP8 definition
 
 # 16 - total number of registers in the CHIP8
 REGISTERS_NUM = 0x10
-FPS = 200
+
 
 # TODO: something got wrong here, 
 # need to fix the console display when TEST_VRAM = True
@@ -260,6 +264,7 @@ ROMs = {
 
 
 # Select the first ROM to start
+# and set the initial values
 # TODO: fix the weird order
 
 ROM_index = 32
@@ -267,7 +272,7 @@ ROM_filename = ROMs.keys()[ROM_index]
 ROM_FPS = ROMs.values()[ROM_index]
 
 # TODO: make the conditional FPS override valid after switching ROMs 
-FPS = ROM_FPS   # initial
+FPS = ROM_FPS   
 
 
 """
@@ -1196,6 +1201,10 @@ chip8CPU = chip8CPU()
 # Initialize the system and load the game
 
 chip8CPU.initialize()
+
+# Force this ROM to load as first - supply a specific ROM filename
+# 
+#ROM_filename = "ROMs_test/heart_monitor.ch8"
 
 chip8CPU.ROMload(ROM_filename)
 
