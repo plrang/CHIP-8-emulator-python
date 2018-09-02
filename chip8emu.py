@@ -42,7 +42,7 @@ import os
 from random import randint, seed, randrange
 from time import time, sleep
 from pprint import pprint
-import collections
+import collections 
 
 
 from pygame.constants import K_SPACE, K_RETURN
@@ -188,88 +188,90 @@ KEY_MAP = {
 }
 
 key_down = 0
-ROMs = collections.OrderedDict()
 
-ROMs = {
-    "ROMs/ZeroDemo.ch8": 1100,
-    "ROMs/Sierpinski.ch8": 0,
-    "ROMs/Trip8.ch8": 1100,
 
-    "ROMs/LunarLander.ch8": 600,
-    # "ROMbisqwit/hello.ch8": 0,
-    # "ROMbisqwit/hanoi.ch8": 0,
-    # "ROMbisqwit/starfield.ch8": 0,
-    "ROMs/AnimalRace.ch8": 700,
-    "ROMs/Minimalgame.ch8": 300,
-    "ROMs/Connect4.ch8": 300,
-    "ROMs/Life.ch8": 300,
+ROMs = collections.OrderedDict([
+    ("ROMs/ZeroDemo.ch8", 1100),
+    ("ROMs/Sierpinski.ch8", 0),
+    ("ROMs/Trip8.ch8", 1100),
+    ("ROMs/LunarLander.ch8", 600),
+    # ("ROMbisqwit/hello.ch8", 0),
+    # ("ROMbisqwit/hanoi.ch8", 0),
+    # ("ROMbisqwit/starfield.ch8", 0),
+    ("ROMs/AnimalRace.ch8", 700),
+    ("ROMs/Minimalgame.ch8", 300),
+    ("ROMs/Connect4.ch8", 300),
+    ("ROMs/Life.ch8", 300),
 
-    "ROMs/Figures.ch8": 500,
-    "ROMs/Tetris.ch8": 200,
-    "ROMs/Blitz.ch8": 200,
-    "ROMs/Stars.ch8": 300,
-    "ROMs/Clock.ch8": 600,
-    "ROMs/KeypadTest.ch8": 300,
+    ("ROMs/Figures.ch8", 500),
+    ("ROMs/Tetris.ch8", 200),
+    ("ROMs/Blitz.ch8", 200),
+    ("ROMs/Stars.ch8", 300),
+    ("ROMs/Clock.ch8", 600),
+    ("ROMs/KeypadTest.ch8", 300),
 
-    "ROMs/Tank": 500,
+    ("ROMs/Tank", 500),
 
-    "ROMs/Tron.ch8": 300,
-    "ROMs/X-Mirror.ch8": 300,
-    "ROMs/ParticleDemo.ch8": 0,
+    ("ROMs/Tron.ch8", 300),
+    ("ROMs/X-Mirror.ch8", 300),
+    ("ROMs/ParticleDemo.ch8", 0),
 
-    "ROMs/WormV4.ch8": 300,
-    "ROMs/MostDangerous.ch8": 300,
-    "ROMs/Missile": 300,
-    "ROMs/SequenceShoot.ch8": 300,
+    ("ROMs/WormV4.ch8", 300),
+    ("ROMs/MostDangerous.ch8", 300),
+    ("ROMs/Missile", 300),
+    ("ROMs/SequenceShoot.ch8", 300),
 
-    "ROMs/Blinky.ch8": 100,
+    ("ROMs/Blinky.ch8", 100),
 
-    "ROMs/Pong2": 500,
-    "ROMs/Pong.ch8": 300,
-    "ROMs/Paddles.ch8": 600,
-    "ROMs/Merlin.ch8": 300,
-    "ROMs/Bowling.ch8": 200,
+    ("ROMs/Pong2", 500),
+    ("ROMs/Pong.ch8", 300),
+    ("ROMs/Paddles.ch8", 600),
+    ("ROMs/Merlin.ch8", 300),
+    ("ROMs/Bowling.ch8", 200),
 
-    "ROMs/Breakout.ch8": 700,
-    "ROMs/Airplane.ch8": 500,
+    ("ROMs/Breakout.ch8", 700),
+    ("ROMs/Airplane.ch8", 500),
 
-    "ROMs/Invaders.ch8": 600,
+    ("ROMs/Invaders.ch8", 600),
 
-    "ROMs/Brix.ch8": 200,
-    "ROMs/Ufo": 400,
-    "ROMs/Craps.ch8": 300,
-    "ROMs/Maze.ch8": 0,
-    "ROMs/Wall.ch8": 300,
-    "ROMs/Chip8Picture.ch8": 300,
-    "ROMs/Cave.ch8": 200,
-    "ROMs/IBMLogo.ch8": 300,
+    ("ROMs/Brix.ch8", 200),
+    ("ROMs/Ufo", 400),
+    ("ROMs/Craps.ch8", 300),
+    ("ROMs/Maze.ch8", 0),
+    ("ROMs/Wall.ch8", 300),
+    ("ROMs/Chip8Picture.ch8", 300),
+    ("ROMs/Cave.ch8", 200),
+    ("ROMs/IBMLogo.ch8", 300),
     
-    "ROMs/Timebomb.ch8": 0,
+    ("ROMs/Timebomb.ch8", 0),
 
-    "ROMs/Soccer.ch8": 600,
+    ("ROMs/Soccer.ch8", 600),
 
-    "ROMs/Submarine.ch8": 300,
-    "ROMs/Astrododge.ch8": 500,
-    "ROMs/Tapeworm.ch8": 300,
-    "ROMs/Tictac": 300,
+    ("ROMs/Submarine.ch8", 300),
+    ("ROMs/Astrododge.ch8", 500),
+    ("ROMs/Tapeworm.ch8", 300),
+    ("ROMs/Tictac", 300),
 
-    "ROMs/RushHour.ch8": 400,
-    "ROMs/15Puzzle.ch8": 800,
+    ("ROMs/RushHour.ch8", 400),
+    ("ROMs/15Puzzle.ch8", 800),
 
-    "ROMs/Kaleid.ch8": 300,
-    "ROMs/Syzygy.ch8": 300,
-    "ROMs/Wipeoff.ch8": 500,
-    "ROMs/Deflection.ch8": 300
-}
+    ("ROMs/Kaleid.ch8", 300),
+    ("ROMs/Syzygy.ch8", 300),
+    ("ROMs/Wipeoff.ch8", 500),
+    ("ROMs/Deflection.ch8", 300) ])
 
 
 # Select the first ROM to start
 # and set the initial values
-# TODO: fix the weird order
 
-ROM_index = 32
+ROM_index = 2
 ROM_filename = ROMs.keys()[ROM_index]
 ROM_FPS = ROMs.values()[ROM_index]
+
+# test the order
+# print ROMs.keys() 
+
+
 
 # TODO: make the conditional FPS override valid after switching ROMs 
 FPS = ROM_FPS   
