@@ -7,7 +7,7 @@
 # This is a working emulator, in that sense it's finished,
 # yet the code architecture, formatting , comments
 # and some other planned functionalities are not yet in place
-
+#
 # Most important sources are/gonna be listed in this file and in the accompanying blog articles
 # Some are already listed in the code
 
@@ -79,6 +79,20 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 # Initialize the game engine
 pygame.init()
 
+
+# Set all except PYGAME_DISPLAY to [False] for better performance
+# TODO: 
+# Choose PYGAME_DISPLAY or TEST_VRAM as True - not both at the moment, cause of the single scaling factor 
+
+PYGAME_DISPLAY = True           # run in the Pygame window
+TEST_VRAM = False               # run in the console
+CONSOLE_CLS = False             # clear console screen before each cycle - fe. to keep it steady in place. In the main loop there are also a few instruction switches
+CONSOLE_DEBUG_SCREEN = False    # live debugger in the console 
+CONSOLE_DEBUG_MSG = False       # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
+
+
+
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -92,9 +106,17 @@ display_width, display_height = 64, 32
 device_screen_in_pixels = display_width, display_height
 
 
+
 # Set the height and width of the whole display
 
-screen_scale = 9        # scale the Pygame display
+
+if PYGAME_DISPLAY:
+    screen_scale = 9        # scale the Pygame display
+else:
+    screen_scale = 1        # scale the console display (more than 3 might look weird; depends on the console resolution)
+
+
+
 screen_status_h = 96    # status field height
 
 app_display_width = display_width * screen_scale
@@ -104,8 +126,7 @@ app_display_pixels_count = app_display_width * app_display_height
 app_display_size = (app_display_width, app_display_height)
 app_screen = pygame.display.set_mode(app_display_size)
 
-device_screen_pixels_count = display_width * \
-    screen_scale * display_height * screen_scale
+device_screen_pixels_count = display_width * screen_scale * display_height * screen_scale
 
 #device_pixels_count = (display_width * screen_scale) * (display_height * screen_scale)
 #surface = pygame.Surface (app_display_size)
@@ -128,16 +149,6 @@ pygame.key.set_repeat(2000, 2000)
 REGISTERS_NUM = 0x10
 
 
-# TODO: something got wrong here, 
-# need to fix the console display when TEST_VRAM = True
-
-
-# Set all to [False] for better performance
-
-TEST_VRAM = False               # show the "video" output in the console
-CONSOLE_CLS = False              # clear console screen before each cycle - fe. to keep it steady in place. In the main loop there are also a few instruction switches
-CONSOLE_DEBUG_SCREEN = False    # live debugger in the console 
-CONSOLE_DEBUG_MSG = False       # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
 
 
 CLS_BG = (128, 128, 128)
@@ -189,11 +200,16 @@ KEY_MAP = {
 
 key_down = 0
 
+# FPS timing
+# 0 means unlimited
+# lower values mean lower frame rate allowed https://www.pygame.org/docs/ref/time.html
+# fe. Trip is set to unlimited as first, for performance observation
+# Sierpinski is CPU intensive, also set to 0 etc.
 
 ROMs = collections.OrderedDict([
     ("ROMs/ZeroDemo.ch8", 1100),
     ("ROMs/Sierpinski.ch8", 0),
-    ("ROMs/Trip8.ch8", 1100),
+    ("ROMs/Trip8.ch8", 0),
     ("ROMs/LunarLander.ch8", 600),
     # ("ROMbisqwit/hello.ch8", 0),
     # ("ROMbisqwit/hanoi.ch8", 0),
@@ -506,19 +522,47 @@ class chip8CPU(object):
         if TEST_VRAM:
             response = ''
             count_w = 1
+            vram_len = 0
+            line_store = ''
+            
             print("\033[1;1f")
 
+
+            # TODO: optimize it
+            
             for pixel in self.VRAM:
                 #response += str(pixel)
 
                 if not pixel:
-                    response += '  '
+                    pixOff = ' ' * screen_scale
+                    response += pixOff
+                    line_store += pixOff
                 else:
-                    response += chr(2) + chr(2)
+                    pixOn = chr(219) * screen_scale
+                    response += pixOn
+                    line_store += pixOn
 
-                if count_w % display_width == 0:
-                    response += '\n'
+
+                #if count_w % display_width == 0: 
+                if count_w * screen_scale % app_display_width == 0: 
+                    response += '\n' 
+                    line_store += '\n'
+                    line_store = line_store * (screen_scale -1)
+                    
+                    response += line_store
+                    count_w = 0
+
+                    line_store = ''
+                
+                 
+                
                 count_w += 1
+                vram_len += 1
+
+                if vram_len > display_width * display_height: 
+                    vram_len = 0
+                    break
+
 
         if CONSOLE_DEBUG_MSG:
             response = ' OP:' + str(hex(self.opcode)) + ' : ' + self.opc_mnemo
@@ -751,8 +795,10 @@ class chip8CPU(object):
         # pxarray[:,:] = (128,0,0)#CLS_BG
         #pxarray[:,:] = CLS_BG
         # clean only the "device" screen part - not the status area below
-        pxarray[:display_width * screen_scale,
-                :display_height * screen_scale] = CLS_BG
+
+        if PYGAME_DISPLAY:
+            pxarray[:display_width * screen_scale,
+                    :display_height * screen_scale] = CLS_BG
 
         self.opc_mnemo = "CLS"
 
@@ -1048,12 +1094,14 @@ class chip8CPU(object):
                 new_y = y_pos * screen_scale
 
                 if VRAM_old ^ sprite_bit:
-                    pxarray[new_x: new_x + screen_scale,
-                            new_y: new_y + screen_scale] = COL_FG
+                    if PYGAME_DISPLAY:
+                        pxarray[new_x: new_x + screen_scale,
+                                new_y: new_y + screen_scale] = COL_FG
                 else:
                     if self.V[0xF]:
-                        pxarray[new_x: new_x + screen_scale,
-                                new_y: new_y + screen_scale] = CLS_BG
+                        if PYGAME_DISPLAY:
+                            pxarray[new_x: new_x + screen_scale,
+                                    new_y: new_y + screen_scale] = CLS_BG
 
 
 #                if pixel & (0x80 >> x_line) != 0:
@@ -1236,11 +1284,12 @@ def status_print():
     else:
         text = font.render("Clock: " + str(FPS), True, COL_FG)
 
-    app_screen.blit(text, [8, app_display_height - 60])
+    if PYGAME_DISPLAY:
+        app_screen.blit(text, [8, app_display_height - 60])
 
-    text = font.render("ROM up / dn: " + chip8CPU.ROMloaded, True, COL_FG)
-    app_screen.blit(text, [180, app_display_height - 60])
-    status_printing = False
+        text = font.render("ROM up / dn: " + chip8CPU.ROMloaded, True, COL_FG)
+        app_screen.blit(text, [180, app_display_height - 60])
+        status_printing = False
 
 
 while not done:
@@ -1250,13 +1299,15 @@ while not done:
         # USED for that F... screen CLEAR!
         # different ways to clear the console
 
-        # print("\033[2J\033[1;1f")         # this instr. instead of the one below worked better on Win 8
+        print("\033[2J\033[1;1f")         # this instr. instead of the one below worked better on Win 8
                                             # try to uncomment it and comment the one below [] os.system('cls') ], to compare                    
-        os.system('cls')        # for Windows
+        #os.system('cls')        # for Windows
         # os.system('clear')    # for Linux/OS X
 
+
     # Virtual screen array
-    pxarray = pygame.PixelArray(app_screen)
+    if PYGAME_DISPLAY:
+        pxarray = pygame.PixelArray(app_screen)
 
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
@@ -1293,7 +1344,9 @@ while not done:
             if key_down == pygame.K_DOWN or key_down == pygame.K_UP:
 
                 print("\033[2J\033[1;1f")   # CLS
-                pxarray[:, :] = CLS_BG      # CLS pygame
+                
+                if PYGAME_DISPLAY:
+                    pxarray[:, :] = CLS_BG      # CLS pygame
 
                 ROM_filename = ROMs.keys()[ROM_index]
                 ROM_FPS = ROMs.values()[ROM_index]
@@ -1314,21 +1367,25 @@ while not done:
 #         FPS = 10
 #         if do_continue: continue
 
-    # Control FPS if not 0
-    if FPS:
-        clock.tick(FPS)
-        # clock.tick_busy_loop(FPS)
+    
 
     # DO a CPU CYCLE
     chip8CPU.RUNcycle()
 
+    # Control FPS if not 0
+    if FPS:
+        clock.tick(FPS)
+        #clock.tick_busy_loop(FPS)
+
     # Virtual screen array remove and update the view
-    del pxarray
+    if PYGAME_DISPLAY:
+        del pxarray
 
     if status_printing:
         status_print()
 
-    pygame.display.update()
+    if PYGAME_DISPLAY:
+        pygame.display.update()
 
 
 # Be IDLE friendly
