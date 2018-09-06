@@ -1,6 +1,6 @@
 #!/usr/bin/python
-# CHIP 8 EMULATOR prototype - by PLRANG ART
-# PYTHON 2.7 / PYGAME
+# CHIP 8 EMULATOR prototype - by PLRANG ART gpg
+# PYTHON 2.7 / PYGAME 
 # v 2.0.0
 # DOCS, LINKS https://plrang.com/blog/chip8-emulator-making/
 
