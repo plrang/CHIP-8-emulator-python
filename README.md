@@ -17,8 +17,8 @@ You may want to read also the introduction in the script 'chip8emu.py' file for 
 
 <b>How to install and run</b>
 
-Download or clone the files. The "ROMs" directory contains the public domain ROM files with simple games and demos.
-If you want to try other ROM files, just put them inside the folder and add to the script source.
+Download or clone the files. 
+Download ROM files (*.ch8) from the web and put them inside the [ROMs] folder, then add or comment out in the script source.
 
 <b>Enter the command to run the emulator</b>
 
