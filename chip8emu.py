@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # CHIP 8 EMULATOR prototype - by PLRANG ART gpg
-# PYTHON 2.7 / PYGAME 
+# PYTHON 2.7 / PYGAME 1.9.3 / colorama 0.4.4
 # v 2.0.0
 # DOCS, LINKS https://plrang.com/blog/chip8-emulator-making/
 
@@ -44,6 +44,7 @@ from time import time, sleep
 from pprint import pprint
 import collections 
 
+os.environ['SDL_VIDEODRIVER'] = 'directx'
 
 from pygame.constants import K_SPACE, K_RETURN
 import colorama             # USED for that F... screen CLEAR
@@ -74,6 +75,8 @@ logger.setLevel(logging.WARN)
 
 # Center the app window on the Desktop
 os.environ['SDL_VIDEO_CENTERED'] = '1'
+
+
 
 
 # Initialize the game engine
@@ -124,7 +127,16 @@ app_display_height = display_height * screen_scale + screen_status_h
 app_display_pixels_count = app_display_width * app_display_height
 
 app_display_size = (app_display_width, app_display_height)
-app_screen = pygame.display.set_mode(app_display_size)
+#app_screen = pygame.display.set_mode(app_display_size)
+#app_screen = pygame.display.set_mode(app_display_size, pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)
+
+app_screen = pygame.display.set_mode(app_display_size, pygame.HWSURFACE | pygame.DOUBLEBUF )
+
+
+
+#flags = pygame.OPENGL | pygame.FULLSCREEN
+#app_screen = pygame.display.set_mode(app_display_size, flags, vsync=1)
+
 
 device_screen_pixels_count = display_width * screen_scale * display_height * screen_scale
 
@@ -137,6 +149,11 @@ pygame.display.set_caption("CHIP8 Emulator by Plrang Art")
 pxarray = pygame.PixelArray(app_screen)
 clock = pygame.time.Clock()
 pygame.key.set_repeat(2000, 2000)
+
+pygame.key.set_repeat(1, 100)
+
+
+
 
 
 
@@ -207,74 +224,91 @@ key_down = 0
 # Sierpinski is CPU intensive, also set to 0 etc.
 
 ROMs = collections.OrderedDict([
-    ("ROMs/ZeroDemo.ch8", 1100),
-    ("ROMs/Sierpinski.ch8", 0),
-    ("ROMs/Trip8.ch8", 0),
-    ("ROMs/LunarLander.ch8", 600),
+    
+
+
+    
+    
+    ("ROMs/test_opcode.ch8", 600),
+    ("ROMs/c8_test.ch8", 600),
+    ("ROMs/Invaders.ch8", 600),
+    ("ROMs/Fishie.ch8", 300),
+    
+    #("ROMs/SoundTest-x.ch8", 300),
+    
+    ("ROMs/SpaceInvaders-2.ch8", 900),
+    
+    
+    #("ROMs/ZeroDemo.ch8", 600),
+    #("ROMs/Sierpinski.ch8", 0),
+    #("ROMs/Trip8.ch8", 600),
+    #("ROMs/LunarLander.ch8", 600),
+    #("ROMs/DelayTimerTest.ch8", 600),
     # ("ROMbisqwit/hello.ch8", 0),
     # ("ROMbisqwit/hanoi.ch8", 0),
     # ("ROMbisqwit/starfield.ch8", 0),
-    ("ROMs/AnimalRace.ch8", 700),
-    ("ROMs/Minimalgame.ch8", 300),
-    ("ROMs/Connect4.ch8", 300),
-    ("ROMs/Life.ch8", 300),
-
-    ("ROMs/Figures.ch8", 500),
-    ("ROMs/Tetris.ch8", 200),
-    ("ROMs/Blitz.ch8", 200),
-    ("ROMs/Stars.ch8", 300),
-    ("ROMs/Clock.ch8", 600),
-    ("ROMs/KeypadTest.ch8", 300),
-
-    ("ROMs/Tank", 500),
-
-    ("ROMs/Tron.ch8", 300),
-    ("ROMs/X-Mirror.ch8", 300),
-    ("ROMs/ParticleDemo.ch8", 0),
-
-    ("ROMs/WormV4.ch8", 300),
-    ("ROMs/MostDangerous.ch8", 300),
-    ("ROMs/Missile", 300),
-    ("ROMs/SequenceShoot.ch8", 300),
-
-    ("ROMs/Blinky.ch8", 100),
-
-    ("ROMs/Pong2", 500),
-    ("ROMs/Pong.ch8", 300),
-    ("ROMs/Paddles.ch8", 600),
-    ("ROMs/Merlin.ch8", 300),
-    ("ROMs/Bowling.ch8", 200),
-
-    ("ROMs/Breakout.ch8", 700),
-    ("ROMs/Airplane.ch8", 500),
-
-    ("ROMs/Invaders.ch8", 600),
-
-    ("ROMs/Brix.ch8", 200),
-    ("ROMs/Ufo", 400),
-    ("ROMs/Craps.ch8", 300),
-    ("ROMs/Maze.ch8", 0),
-    ("ROMs/Wall.ch8", 300),
-    ("ROMs/Chip8Picture.ch8", 300),
-    ("ROMs/Cave.ch8", 200),
-    ("ROMs/IBMLogo.ch8", 300),
     
-    ("ROMs/Timebomb.ch8", 0),
+    # ("ROMs/AnimalRace.ch8", 700),
+    # ("ROMs/Minimalgame.ch8", 300),
+    # ("ROMs/Connect4.ch8", 300),
+    # ("ROMs/Life.ch8", 300),
 
-    ("ROMs/Soccer.ch8", 600),
+    # ("ROMs/Figures.ch8", 500),
+    # ("ROMs/Tetris.ch8", 200),
+    # ("ROMs/Blitz.ch8", 200),
+    # ("ROMs/Stars.ch8", 300),
+    # ("ROMs/Clock.ch8", 600),
+    # ("ROMs/KeypadTest.ch8", 300),
 
-    ("ROMs/Submarine.ch8", 300),
-    ("ROMs/Astrododge.ch8", 500),
-    ("ROMs/Tapeworm.ch8", 300),
-    ("ROMs/Tictac", 300),
+    # ("ROMs/Tank", 500),
 
-    ("ROMs/RushHour.ch8", 400),
-    ("ROMs/15Puzzle.ch8", 800),
+    # ("ROMs/Tron.ch8", 300),
+    # ("ROMs/X-Mirror.ch8", 300),
+    # ("ROMs/ParticleDemo.ch8", 0),
 
-    ("ROMs/Kaleid.ch8", 300),
-    ("ROMs/Syzygy.ch8", 300),
-    ("ROMs/Wipeoff.ch8", 500),
-    ("ROMs/Deflection.ch8", 300) ])
+    # ("ROMs/WormV4.ch8", 300),
+    # ("ROMs/MostDangerous.ch8", 300),
+    # ("ROMs/Missile", 300),
+    # ("ROMs/SequenceShoot.ch8", 300),
+
+    # ("ROMs/Blinky.ch8", 100),
+
+    # ("ROMs/Pong2", 500),
+    # ("ROMs/Pong.ch8", 300),
+    # ("ROMs/Paddles.ch8", 600),
+    # ("ROMs/Merlin.ch8", 300),
+    # ("ROMs/Bowling.ch8", 200),
+
+    # ("ROMs/Breakout.ch8", 400),
+    # ("ROMs/Airplane.ch8", 500),
+   
+
+    # ("ROMs/Brix.ch8", 200),
+    # ("ROMs/Ufo", 400),
+    # ("ROMs/Craps.ch8", 300),
+    # ("ROMs/Maze.ch8", 0),
+    # ("ROMs/Wall.ch8", 300),
+    # ("ROMs/Chip8Picture.ch8", 300),
+    # ("ROMs/Cave.ch8", 200),
+    # ("ROMs/IBMLogo.ch8", 300),
+    
+    # ("ROMs/Timebomb.ch8", 0),
+
+    # ("ROMs/Soccer.ch8", 600),
+
+    # ("ROMs/Submarine.ch8", 300),
+    # ("ROMs/Astrododge.ch8", 500),
+    # ("ROMs/Tapeworm.ch8", 300),
+    # ("ROMs/Tictac", 300),
+
+    # ("ROMs/RushHour.ch8", 400),
+    # ("ROMs/15Puzzle.ch8", 800),
+
+    # ("ROMs/Kaleid.ch8", 300),
+    # ("ROMs/Syzygy.ch8", 300),
+    # ("ROMs/Wipeoff.ch8", 500),
+    # ("ROMs/Deflection.ch8", 300) 
+    ])
 
 
 # Select the first ROM to start
@@ -1127,6 +1161,7 @@ class chip8CPU(object):
 
         if self.KBOARD[self.V[X] & 0xF] == 1:
             self.PC += 2
+        
 
         self.opc_mnemo = "SKP_vx"
 
@@ -1162,6 +1197,7 @@ class chip8CPU(object):
             self.V[X] = KEY_MAP[key_down]
         else:
             self.PC -= 2
+        
 
     # Fx18                                          self.tone = VX    - sound timer set to VX
     # VX to SOUND TIMER
@@ -1274,6 +1310,10 @@ done = False
 status_printing = True
 
 
+tmp_timer_delay = 0
+
+
+
 def status_print():
     global status_printing
 
@@ -1294,6 +1334,9 @@ def status_print():
 
 while not done:
 
+
+                
+
     if CONSOLE_CLS:
         
         # USED for that F... screen CLEAR!
@@ -1304,14 +1347,20 @@ while not done:
         #os.system('cls')        # for Windows
         # os.system('clear')    # for Linux/OS X
 
-
+    
     # Virtual screen array
     if PYGAME_DISPLAY:
         pxarray = pygame.PixelArray(app_screen)
+    
+
 
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             done = True  # Flag that we are done so we exit this loop
+
+
+
+        
 
 #    STEP BY STEP control part 1
 
@@ -1371,11 +1420,13 @@ while not done:
 
     # DO a CPU CYCLE
     chip8CPU.RUNcycle()
+    
 
     # Control FPS if not 0
     if FPS:
         clock.tick(FPS)
         #clock.tick_busy_loop(FPS)
+
 
     # Virtual screen array remove and update the view
     if PYGAME_DISPLAY:
@@ -1384,8 +1435,18 @@ while not done:
     if status_printing:
         status_print()
 
+    #if tmp_timer_delay == 2:
+
     if PYGAME_DISPLAY:
         pygame.display.update()
+
+        #tmp_timer_delay=0
+
+    #tmp_timer_delay += 1
+
+    
+
+    
 
 
 # Be IDLE friendly
