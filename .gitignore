@@ -3,6 +3,6 @@ todo-chip8.txt
 .project
 .pydevproject
 test*
-ROMs_test/
+ROMs_test/*
 ROMs/*
 venv/
