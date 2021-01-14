@@ -701,7 +701,7 @@ class chip8CPU(object):
 
         if TEST_VRAM or CONSOLE_DEBUG_SCREEN or CONSOLE_DEBUG_MSG:
             print self
-
+            
         self.PC += 2
 
 
@@ -1347,7 +1347,6 @@ chip8CPU.initialize()
 # Force this ROM to load as first - supply a specific ROM filename
 # 
 
-
 ROM_filename = "ROMs/Tetris.ch8"
 ROM_filename = "ROMs/DelayTimerTest.ch8"
 
@@ -1498,7 +1497,8 @@ while not done:
 
     #print(KBOARD_PRESSED_DELAY)
         
-    print(chip8CPU.KBOARD)
+    
+    print(chip8CPU.KBOARD)  # TESTING
 
 
 # **************** THIS BLOCK
