@@ -87,11 +87,25 @@ pygame.init()
 # TODO: 
 # Choose PYGAME_DISPLAY or TEST_VRAM as True - not both at the moment, cause of the single scaling factor 
 
-PYGAME_DISPLAY = True           # run in the Pygame window
-TEST_VRAM = False               # run in the console
+
+# COMMENT OUT the set to get
+# CONSOLE SETUP / DEBUG or
+
+PYGAME_DISPLAY = False          # run in the Pygame window
+TEST_VRAM = False                # EMU SCREEN in the console
 CONSOLE_CLS = False             # clear console screen before each cycle - fe. to keep it steady in place. In the main loop there are also a few instruction switches
-CONSOLE_DEBUG_SCREEN = False    # live debugger in the console 
-CONSOLE_DEBUG_MSG = False       # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
+CONSOLE_DEBUG_SCREEN = True     # live debugger in the console 
+CONSOLE_DEBUG_MSG = True       # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
+
+# TODO: temporary / improve it  
+
+# PYGAME SETUP
+
+PYGAME_DISPLAY = True         
+TEST_VRAM = False               
+CONSOLE_CLS = False             
+CONSOLE_DEBUG_SCREEN = False
+CONSOLE_DEBUG_MSG = False  
 
 
 
@@ -106,7 +120,7 @@ RED = (255, 0, 0)
 PI = 3.141592653
 
 display_width, display_height = 64, 32
-device_screen_in_pixels = display_width, display_height
+#device_screen_in_pixels = display_width, display_height
 
 
 
@@ -176,24 +190,25 @@ COL_FG = (64, 64, 64)
 
 # Sets which keys on the keyboard map to the Chip 8 keys
 # STANDARD
-KEY_MAP = {
-    pygame.K_KP0: 0x0,
-    pygame.K_KP1: 0x1,
-    pygame.K_KP2: 0x2,
-    pygame.K_KP3: 0x3,
-    pygame.K_KP4: 0x4,
-    pygame.K_KP5: 0x5,
-    pygame.K_KP6: 0x6,
-    pygame.K_KP7: 0x7,
-    pygame.K_KP8: 0x8,
-    pygame.K_KP9: 0x9,
-    pygame.K_a: 0xA,
-    pygame.K_b: 0xB,
-    pygame.K_c: 0xC,
-    pygame.K_d: 0xD,
-    pygame.K_e: 0xE,
-    pygame.K_f: 0xF
-}
+
+# KEY_MAP = {
+#     pygame.K_KP0: 0x0,
+#     pygame.K_KP1: 0x1,
+#     pygame.K_KP2: 0x2,
+#     pygame.K_KP3: 0x3,
+#     pygame.K_KP4: 0x4,
+#     pygame.K_KP5: 0x5,
+#     pygame.K_KP6: 0x6,
+#     pygame.K_KP7: 0x7,
+#     pygame.K_KP8: 0x8,
+#     pygame.K_KP9: 0x9,
+#     pygame.K_a: 0xA,
+#     pygame.K_b: 0xB,
+#     pygame.K_c: 0xC,
+#     pygame.K_d: 0xD,
+#     pygame.K_e: 0xE,
+#     pygame.K_f: 0xF
+# }
 
 # PC NUM
 KEY_MAP = {
@@ -217,6 +232,30 @@ KEY_MAP = {
 
 key_down = 0
 
+
+print(KEY_MAP)
+
+
+# MAKE KEYBOARD KEYS DELAY WITH TIME, not to rely on ket up
+# Seems to not make things any better
+
+KBOARD_PRESSED_DELAY_DEFAULT = 50
+KBOARD_PRESSED_DELAY = {}
+
+for k in KEY_MAP:
+    print(k)
+    KBOARD_PRESSED_DELAY[k] = 0
+
+print(KBOARD_PRESSED_DELAY)
+
+#exit()
+
+
+# for v in KBOARD_PRESSED_DELAY:
+#     print (KBOARD_PRESSED_DELAY[v])
+
+# exit()
+
 # FPS timing
 # 0 means unlimited
 # lower values mean lower frame rate allowed https://www.pygame.org/docs/ref/time.html
@@ -232,11 +271,29 @@ ROMs = collections.OrderedDict([
     ("ROMs/test_opcode.ch8", 600),
     ("ROMs/c8_test.ch8", 600),
     ("ROMs/Invaders.ch8", 600),
+    
+    
+
     ("ROMs/Fishie.ch8", 300),
     
     #("ROMs/SoundTest-x.ch8", 300),
     
-    ("ROMs/SpaceInvaders-2.ch8", 900),
+    ("ROMs/SpaceInvaders-2.ch8", 600),
+
+    ("ROMs_test/br8kout.ch8", 600),
+    ("ROMs_test/rockto.ch8", 600),
+    ("ROMs_test/flightrunner.ch8", 600),
+    ("ROMs_test/1dcell.ch8", 600),
+    ("ROMs_test/snake.ch8", 600),
+    ("ROMs_test/glitchGhost.ch8", 600),
+    ("ROMs_test/flutterby.ch8", 600),
+    ("ROMs_test/BadKaiJuJu.ch8", 600), # ??
+    ("ROMs_test/businessiscontagious.ch8", 600), # xochip ?
+    ("ROMs_test/!SpaceInvaders.ch8", 400),
+    
+    
+    ("ROMs_test/pumpkindressup.ch8", 600),
+    
     
     
     #("ROMs/ZeroDemo.ch8", 600),
@@ -254,8 +311,8 @@ ROMs = collections.OrderedDict([
     # ("ROMs/Life.ch8", 300),
 
     # ("ROMs/Figures.ch8", 500),
-    # ("ROMs/Tetris.ch8", 200),
-    # ("ROMs/Blitz.ch8", 200),
+    ("ROMs/Tetris.ch8", 300),
+    ("ROMs/Blitz.ch8", 300),
     # ("ROMs/Stars.ch8", 300),
     # ("ROMs/Clock.ch8", 600),
     # ("ROMs/KeypadTest.ch8", 300),
@@ -268,22 +325,22 @@ ROMs = collections.OrderedDict([
 
     # ("ROMs/WormV4.ch8", 300),
     # ("ROMs/MostDangerous.ch8", 300),
-    # ("ROMs/Missile", 300),
+    ("ROMs/Missile", 300),
     # ("ROMs/SequenceShoot.ch8", 300),
 
-    # ("ROMs/Blinky.ch8", 100),
+    ("ROMs/Blinky.ch8", 100),
 
     # ("ROMs/Pong2", 500),
-    # ("ROMs/Pong.ch8", 300),
-    # ("ROMs/Paddles.ch8", 600),
+    ("ROMs/Pong.ch8", 300),
+    ("ROMs/Paddles.ch8", 600),
     # ("ROMs/Merlin.ch8", 300),
     # ("ROMs/Bowling.ch8", 200),
 
-    # ("ROMs/Breakout.ch8", 400),
+    ("ROMs/Breakout.ch8", 400),
     # ("ROMs/Airplane.ch8", 500),
    
 
-    # ("ROMs/Brix.ch8", 200),
+    ("ROMs/Brix.ch8", 200),
     # ("ROMs/Ufo", 400),
     # ("ROMs/Craps.ch8", 300),
     # ("ROMs/Maze.ch8", 0),
@@ -770,23 +827,17 @@ class chip8CPU(object):
         }
 
         op_test = self.opcode & 0xF000
+                  
 
-        # TEST - looking for this opcode if it works?
-        if op_test == 0xb000:
-            winsound.Beep(Freq, 50)
+        # TEST - looking for this opcode if it does work?
+        #if op_test == 0xb000:
+        #    winsound.Beep(Freq, 50)
 
         switch = {
-
-            0x0000: lambda: 0x0000 | self.opcode & 0xF0FF,
-
-            # important first F as a op type and last F as a op number
-            0x8000: lambda: 0x8000 | self.opcode & 0xF00F,
-            # like 0x8XY1
-            0xE000: lambda: 0xE000 | self.opcode & 0xF0FF,
-
-            # if op_code is like 0xFzzz then opcodec are 0xFX12,
-            0xF000: lambda: 0xF000 | self.opcode & 0xF0FF
-            # so make the OR with F0 and FF to clear the data at 0
+            0x0000: lambda: 0x0000 | self.opcode & 0xF0FF,  # important first F as a op type and last F as a op number
+            0x8000: lambda: 0x8000 | self.opcode & 0xF00F,  # like 0x8XY1
+            0xE000: lambda: 0xE000 | self.opcode & 0xF0FF,  # if op_code is like 0xFzzz then opcodes are 0xFX12,
+            0xF000: lambda: 0xF000 | self.opcode & 0xF0FF   # so make the OR with F0 and FF to clear the data at 0
         }
 
         if op_test in switch:
@@ -838,7 +889,7 @@ class chip8CPU(object):
 
     # 0x00EE                                return from a subroutine
     def op_RTS(self):
-
+        
         self.SP -= 1
         self.PC = self.stack[self.SP % 12]
 
@@ -916,11 +967,12 @@ class chip8CPU(object):
     def op_ADD_vx_nn(self):
         X = self.X
 
+        self.V[X] = (self.V[X] + self.nn) & 0xFF  # need to take care of BYTES
+        #self.V[X] = (self.V[X] + self.nn) % 256
+
         self.opc_mnemo = "ADD V" + \
             str(X) + ", " + str(self.V[X]) + ", " + str(self.nn)
 
-        self.V[X] = (self.V[X] + self.nn) & 0xFF  # need to take care of BYTES
-        #self.V[X] = (self.V[X] + self.nn) % 256
 
     # 8XY0                                           set to VX load VY
 
@@ -1082,8 +1134,8 @@ class chip8CPU(object):
         nn = self.nn
 
         self.V[X] = (randint(0, 255) & nn) & 0xFF  # byte
-        self.opc_mnemo = "rnd VX " + str(hex(X)) + ", " + str(hex(nn))
 
+        self.opc_mnemo = "rnd VX " + str(hex(X)) + ", " + str(hex(nn))
 
 # Dxyn    DRAW
 #    Display n-byte sprite starting at memory location I at (Vx, Vy),
@@ -1096,6 +1148,8 @@ class chip8CPU(object):
 #    If the sprite is positioned so part of it is outside the coordinates of # the display,
 #    it wraps around to the opposite side of the screen
 
+# TODO: move the drawing code - not related to the emulator architecture - to an external procedure
+# for easier reading and optimalization
 
     def op_D_XYN(self):                       # Dxyn    DRAW
 
@@ -1258,11 +1312,11 @@ class chip8CPU(object):
     def op_LD_i_VX(self):
         X = self.X
 
-        self.opc_mnemo = 'LD memI[' + \
-            str(hex(self.I)) + ']+' + ", V 0-" + str(hex(X))
-
         for i in range(X + 1):
             self.memory[(self.I + i) & 0xFFF] = self.V[i]
+
+        self.opc_mnemo = 'LD memI[' + \
+            str(hex(self.I)) + ']+' + ", V 0-" + str(hex(X))
 
     # Fx65                                        Fills V0 to VX (including VX) with values from memory starting at address I
     #                                             fill V0 to VX with contents of mem[I]+
@@ -1279,6 +1333,8 @@ class chip8CPU(object):
 
 
 
+
+
 # START the action
 # CREATE the CPU
 
@@ -1290,7 +1346,10 @@ chip8CPU.initialize()
 
 # Force this ROM to load as first - supply a specific ROM filename
 # 
-#ROM_filename = "ROMs_test/heart_monitor.ch8"
+
+
+ROM_filename = "ROMs/Tetris.ch8"
+ROM_filename = "ROMs/DelayTimerTest.ch8"
 
 chip8CPU.ROMload(ROM_filename)
 
@@ -1314,8 +1373,10 @@ tmp_timer_delay = 0
 
 
 
+
+
 def status_print():
-    global status_printing
+    global status_printing, KBOARD_PRESSED_DELAY
 
     font = pygame.font.SysFont('Small Fonts', 28, False, False)
 
@@ -1355,6 +1416,7 @@ while not done:
 
 
     for event in pygame.event.get():  # User did something
+
         if event.type == pygame.QUIT:  # If user clicked close
             done = True  # Flag that we are done so we exit this loop
 
@@ -1375,7 +1437,11 @@ while not done:
             #key_down = pygame.key.get_pressed()
             key_down = event.key
             if key_down in KEY_MAP:
+                #chip8CPU.KBOARD[KEY_MAP[key_down]] = 1
                 chip8CPU.KBOARD[KEY_MAP[key_down]] = 1
+                
+                KBOARD_PRESSED_DELAY[ key_down ] = KBOARD_PRESSED_DELAY_DEFAULT
+
             if key_down == pygame.K_ESCAPE:
                 quit()
 
@@ -1406,26 +1472,52 @@ while not done:
                 chip8CPU.ROMload(ROM_filename)
                 status_printing = True
                 #print ROM_index
-
+                
         else:
-            chip8CPU.KBOARD = [0]*16
-            key_down = False
+
+            # chip8CPU.KBOARD = [0]*16
+            # key_down = False
+
+# **************** THIS BLOCK instead of above 2 lines - to create a delayable keyboard input 
+# to see if in SPACE INVADERS the ship will move faster / possibly dropped key presses?
+# SEEMS like it doesn't do any better
+# 
+#                 
+            pass    
+
+    for index, v in enumerate(KBOARD_PRESSED_DELAY):
+        #print(index, v, KEY_MAP[v])
+        if KBOARD_PRESSED_DELAY[ v ] > 0:
+            KBOARD_PRESSED_DELAY[ v ] -=1 
+        
+        if KBOARD_PRESSED_DELAY[ v ] == 0:
+            
+            chip8CPU.KBOARD[ KEY_MAP[v] ] = 0
+            KBOARD_PRESSED_DELAY[ v ] = -1
+            
+
+    #print(KBOARD_PRESSED_DELAY)
+        
+    print(chip8CPU.KBOARD)
+
+
+# **************** THIS BLOCK
 
 
 #    STEP BY STEP control part 2
-#         FPS = 10
+    # FPS = 1456123525245621
 #         if do_continue: continue
 
     
 
     # DO a CPU CYCLE
     chip8CPU.RUNcycle()
-    
 
     # Control FPS if not 0
     if FPS:
         clock.tick(FPS)
         #clock.tick_busy_loop(FPS)
+
 
 
     # Virtual screen array remove and update the view
