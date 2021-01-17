@@ -482,7 +482,10 @@ class chip8CPU(object):
         # sets it to 0)
 
         # Init clear screen
-        self.VRAM = bytearray([0] * 4096)           # this is memory[0xF00];
+        # self.VRAM = bytearray([0] * 4096)           # this is memory[0xF00];
+
+        self.VRAM = bytearray([0] * (display_width * display_height))
+
         # This isnt really a register, even though the opcode treat it that way.
         self.KBOARD = [0]*16
         # There are 16 keys available, labeled "0" to "F". Keys may be sampled or waited for
@@ -656,7 +659,7 @@ class chip8CPU(object):
 
 
         if CONSOLE_DEBUG_MSG:
-            response = ' OP:' + str(hex(self.opcode)) + ' : ' + self.opc_mnemo
+            response =  str(self.cycle_num) + ' OP:' + str(hex(self.opcode)) + ' : ' + self.opc_mnemo
 
         return response
 
@@ -665,8 +668,6 @@ class chip8CPU(object):
     # RUN CYCLE
 
     def RUNcycle(self):
-
-        self.cycle_num += 1     # just for us
 
         # Decode & Execute
 
@@ -702,7 +703,9 @@ class chip8CPU(object):
         if TEST_VRAM or CONSOLE_DEBUG_SCREEN or CONSOLE_DEBUG_MSG:
             print self
             
+        
         self.PC += 2
+        self.cycle_num += 1     # just for us
 
 
     # OPCODEs DECODE & EXECUTE
@@ -727,7 +730,7 @@ class chip8CPU(object):
         self.nnn = self.opcode & 0x0FFF
 
         if CONSOLE_DEBUG_MSG:
-            print ' PC:' + str(hex(self.PC)),
+            print str(self.cycle_num) + ' PC:' + str(hex(self.PC)),
 
         self.opcode_lookup = {
 
@@ -859,6 +862,19 @@ class chip8CPU(object):
             return str(hex(self.opcode)) + ' Look up error'
             pass
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     # ***************
     # *** OPCODES ***
     # ***************
@@ -877,6 +893,7 @@ class chip8CPU(object):
         for i in range(len(self.VRAM)):
             self.VRAM[i] = 0
 
+
         # pxarray[:,:] = (128,0,0)#CLS_BG
         #pxarray[:,:] = CLS_BG
         # clean only the "device" screen part - not the status area below
@@ -891,7 +908,7 @@ class chip8CPU(object):
     def op_RTS(self):
         
         self.SP -= 1
-        self.PC = self.stack[self.SP % 12]
+        self.PC = self.stack[self.SP % 16]
 
         self.opc_mnemo = "RTS"
 
@@ -911,7 +928,7 @@ class chip8CPU(object):
     def op_SUB(self):                           # TODO check for ++self.SP % 12 - at BISKWIT
 
         # increment stack pointer SP + 1 and put there current PC / program counter on the stack
-        self.stack[self.SP % 12] = self.PC
+        self.stack[self.SP % 16] = self.PC
         self.SP += 1
 
         self.PC = self.nnn                      # new program counter PC
@@ -1216,7 +1233,7 @@ class chip8CPU(object):
         if self.KBOARD[self.V[X] & 0xF] == 1:
             self.PC += 2
         
-
+        
         self.opc_mnemo = "SKP_vx"
 
     # 0xE0A1                                    # ExA1    skip next instruction if key stored in  VX  is NOT pressed
@@ -1226,7 +1243,8 @@ class chip8CPU(object):
 
         if self.KBOARD[self.V[X] & 0xF] != 1:
             self.PC += 2
-
+        
+        
         self.opc_mnemo = "SKNP_vx"
 
     # Fx07                                            VX = self.time
@@ -1239,7 +1257,7 @@ class chip8CPU(object):
         self.opc_mnemo = "LD V" + str(X) + ', ' + str(self.time)
 
     # 0xF00A                                    Fx0A    Wait for a key press, store the value of the key in Vx.
-        #       All execution stops until a key is pressed,
+        #       All execution stops until a key is pressed (?)
         #       then the value of that key is stored in Vx
 
     def op_LD_VX_n(self):
@@ -1247,10 +1265,10 @@ class chip8CPU(object):
 
         if key_down:
             self.KBOARD[KEY_MAP[key_down]] = 1      #
-            # the NEEDED signal comes from the keyboard pressed
+            # the REQUIRED signal comes from the keyboard pressed
             self.V[X] = KEY_MAP[key_down]
-        else:
-            self.PC -= 2
+        # else:
+        #     self.PC -= 2
         
 
     # Fx18                                          self.tone = VX    - sound timer set to VX
@@ -1348,7 +1366,8 @@ chip8CPU.initialize()
 # 
 
 ROM_filename = "ROMs/Tetris.ch8"
-ROM_filename = "ROMs/DelayTimerTest.ch8"
+ROM_filename = "ROMs/Trip8.ch8"
+#ROM_filename = "ROMs/DelayTimerTest.ch8"
 
 chip8CPU.ROMload(ROM_filename)
 
@@ -1392,11 +1411,21 @@ def status_print():
         status_printing = False
 
 
+
+
+
+
+
+time_passed = 0
+lastTime = 0
+FPSrequired = 10
+
 while not done:
 
+    
 
-                
 
+    #CONSOLE_CLS = True
     if CONSOLE_CLS:
         
         # USED for that F... screen CLEAR!
@@ -1408,6 +1437,7 @@ while not done:
         # os.system('clear')    # for Linux/OS X
 
     
+
     # Virtual screen array
     if PYGAME_DISPLAY:
         pxarray = pygame.PixelArray(app_screen)
@@ -1491,14 +1521,14 @@ while not done:
         
         if KBOARD_PRESSED_DELAY[ v ] == 0:
             
-            chip8CPU.KBOARD[ KEY_MAP[v] ] = 0
+            chip8CPU.KBOARD[ KEY_MAP[v] ] = 0   # clear the CHIP8 keyboard buffer after a given delay
             KBOARD_PRESSED_DELAY[ v ] = -1
             
 
     #print(KBOARD_PRESSED_DELAY)
         
     
-    print(chip8CPU.KBOARD)  # TESTING
+    #print(chip8CPU.KBOARD)  # TESTING
 
 
 # **************** THIS BLOCK
@@ -1508,15 +1538,62 @@ while not done:
     # FPS = 1456123525245621
 #         if do_continue: continue
 
+    #print "now:", now
+    #elapsed =  now - lastTime
     
+    #print "lastTime:", lastTime
+    #print "Elapsed: ", elapsed
 
-    # DO a CPU CYCLE
-    chip8CPU.RUNcycle()
+    #deltaTime = elapsed /1000
+
 
     # Control FPS if not 0
-    if FPS:
-        clock.tick(FPS)
+    FPS = 800
+    #if FPS:
+    deltaTime = clock.tick(FPS)
         #clock.tick_busy_loop(FPS)
+
+
+    #print "Delta T:", deltaTime
+   
+
+    # if deltaTime < 0.0001:
+    #     deltaTime = 0.0001
+
+    FPSrequired = 500
+    #FPScurrent = 1/ float(deltaTime)
+    time_passed += deltaTime
+    
+    #print "time_passed:", time_passed
+    # print "float(time_passed)/100:", float(time_passed)/100
+    
+    
+    #print "FPSrequired:", FPSrequired
+    # print "1/FPSrequired:", 1/float(FPSrequired) 
+    
+    
+    # DO a CPU CYCLE
+
+
+    chip8CPU.RUNcycle()
+
+    if float(time_passed)/1000 > 1/float(FPSrequired):
+        
+        
+        #chip8CPU.RUNcycle()
+        
+        #print "time_passed:", float(time_passed)/1000
+        # print "1/float(FPSrequired):", 1/float(FPSrequired)
+        
+        
+        time_passed = 0
+        # print "CYCLE = 1"
+    # else:
+        # print "CYCLE = 0"
+
+
+
+    
 
 
 
@@ -1537,7 +1614,7 @@ while not done:
     #tmp_timer_delay += 1
 
     
-
+    #lastTime = now
     
 
 
