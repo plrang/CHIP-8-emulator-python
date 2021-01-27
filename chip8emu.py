@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # CHIP 8 EMULATOR prototype - by PLRANG ART gpg
 # PYTHON 2.7 / PYGAME 1.9.3 / colorama 0.4.4
-# v 2.0.0
+# v 2.1 - WIP
 # DOCS, LINKS https://plrang.com/blog/chip8-emulator-making/
 
 # This is a working emulator, in that sense it's finished,
@@ -682,8 +682,10 @@ class chip8CPU(object):
 
             self.tone -= 1
 
-        if self.time > 0:
-            self.time -= 1
+        # Allow to ADJUST the DELAY TIMER according to the "clock"
+        if self.cycle_num%10==0:
+            if self.time > 0:
+                self.time -= 1
 
             # Program Counter UP
 
@@ -1365,8 +1367,8 @@ chip8CPU.initialize()
 # Force this ROM to load as first - supply a specific ROM filename
 # 
 
-ROM_filename = "ROMs/Tetris.ch8"
-ROM_filename = "ROMs/Trip8.ch8"
+# ROM_filename = "ROMs/Tetris.ch8"
+# ROM_filename = "ROMs/Trip8.ch8"
 #ROM_filename = "ROMs/DelayTimerTest.ch8"
 
 chip8CPU.ROMload(ROM_filename)
@@ -1414,16 +1416,14 @@ def status_print():
 
 
 
-
+# Variables to hold values needed for setting the requested FPS rate
+# not used yet
 
 time_passed = 0
 lastTime = 0
 FPSrequired = 10
 
 while not done:
-
-    
-
 
     #CONSOLE_CLS = True
     if CONSOLE_CLS:
@@ -1443,13 +1443,10 @@ while not done:
         pxarray = pygame.PixelArray(app_screen)
     
 
-
     for event in pygame.event.get():  # User did something
 
         if event.type == pygame.QUIT:  # If user clicked close
             done = True  # Flag that we are done so we exit this loop
-
-
 
         
 
@@ -1548,9 +1545,10 @@ while not done:
 
 
     # Control FPS if not 0
-    FPS = 800
-    #if FPS:
-    deltaTime = clock.tick(FPS)
+    #FPS = 800
+
+    if FPS:
+        deltaTime = clock.tick(FPS)
         #clock.tick_busy_loop(FPS)
 
 
@@ -1560,7 +1558,7 @@ while not done:
     # if deltaTime < 0.0001:
     #     deltaTime = 0.0001
 
-    FPSrequired = 500
+    FPSrequired = 60
     #FPScurrent = 1/ float(deltaTime)
     time_passed += deltaTime
     
@@ -1574,10 +1572,11 @@ while not done:
     
     # DO a CPU CYCLE
 
+    # UPCYCLE loop for more emulator ticks in a main loop - increase the performance
+    for k in range(2):
+        chip8CPU.RUNcycle()
 
-    chip8CPU.RUNcycle()
-
-    if float(time_passed)/1000 > 1/float(FPSrequired):
+    #if float(time_passed)/1000 > 1/float(FPSrequired):
         
         
         #chip8CPU.RUNcycle()
@@ -1591,9 +1590,6 @@ while not done:
     # else:
         # print "CYCLE = 0"
 
-
-
-    
 
 
 
