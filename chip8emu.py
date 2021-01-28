@@ -44,12 +44,13 @@ from time import time, sleep
 from pprint import pprint
 import collections 
 
+
 os.environ['SDL_VIDEODRIVER'] = 'directx'
 
 from pygame.constants import K_SPACE, K_RETURN
 import colorama             # USED for that F... screen CLEAR
 
-colorama.init()
+colorama.init() 
 
 import winsound
 Freq = 3500  # Set Frequency To 2500 Hertz
@@ -70,44 +71,40 @@ logger.setLevel(logging.CRITICAL)
 # logger.setLevel(logging.INFO)
 logger.setLevel(logging.WARN)
 
-
-
-
 # Center the app window on the Desktop
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-
-
 
 # Initialize the game engine
 pygame.init()
 
 
+# CONFIG: see the file "config.txt"
 # Set all except PYGAME_DISPLAY to [False] for better performance
-# TODO: 
 # Choose PYGAME_DISPLAY or TEST_VRAM as True - not both at the moment, cause of the single scaling factor 
 
+from configparser import ConfigParser
 
-# COMMENT OUT the set to get
-# CONSOLE SETUP / DEBUG or
+conf = ConfigParser()
+conf.read('config.txt')
 
-PYGAME_DISPLAY = False          # run in the Pygame window
-TEST_VRAM = False                # EMU SCREEN in the console
-CONSOLE_CLS = False             # clear console screen before each cycle - fe. to keep it steady in place. In the main loop there are also a few instruction switches
-CONSOLE_DEBUG_SCREEN = True     # live debugger in the console 
-CONSOLE_DEBUG_MSG = True       # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
+# PYGAME_DISPLAY           # run in the Pygame window
+# TEST_VRAM                # EMU SCREEN in the console
+# CONSOLE_CLS              # clear console screen before each cycle - fe. to keep it steady in place. In the main loop there are also a few instruction switches
+# CONSOLE_DEBUG_SCREEN     # live debugger in the console 
+# CONSOLE_DEBUG_MSG        # when [only this one] is set to True - show the disassembler running in the concole, hold the LMB on a Pygame window tab to pause scroll
 
-# TODO: temporary / improve it  
+cfg_set = 'pygame'
+#cfg_set = 'console-game'   # keyboard support not implemented
+#cfg_set = 'console-debug'
 
-# PYGAME SETUP
+PYGAME_DISPLAY  = conf[cfg_set].getboolean('PYGAME_DISPLAY')
+TEST_VRAM       = conf[cfg_set].getboolean('TEST_VRAM')
+CONSOLE_CLS     = conf[cfg_set].getboolean('CONSOLE_CLS')
+CONSOLE_DEBUG_SCREEN = conf[cfg_set].getboolean('CONSOLE_DEBUG_SCREEN')
+CONSOLE_DEBUG_MSG = conf[cfg_set].getboolean('CONSOLE_DEBUG_MSG')
 
-PYGAME_DISPLAY = True         
-TEST_VRAM = False               
-CONSOLE_CLS = False             
-CONSOLE_DEBUG_SCREEN = False
-CONSOLE_DEBUG_MSG = False  
-
-
+# for k in conf[cfg_set]:
+#     print k, conf[cfg_set][k]
 
 
 # Define some colors
@@ -121,8 +118,6 @@ PI = 3.141592653
 
 display_width, display_height = 64, 32
 #device_screen_in_pixels = display_width, display_height
-
-
 
 # Set the height and width of the whole display
 
@@ -263,9 +258,6 @@ print(KBOARD_PRESSED_DELAY)
 # Sierpinski is CPU intensive, also set to 0 etc.
 
 ROMs = collections.OrderedDict([
-    
-
-
     
     
     ("ROMs/test_opcode.ch8", 600),
@@ -732,7 +724,7 @@ class chip8CPU(object):
         self.nnn = self.opcode & 0x0FFF
 
         if CONSOLE_DEBUG_MSG:
-            print str(self.cycle_num) + ' PC:' + str(hex(self.PC)),
+            print str(self.cycle_num) + ' PC:' + str(hex(self.PC))
 
         self.opcode_lookup = {
 
@@ -1425,19 +1417,6 @@ FPSrequired = 10
 
 while not done:
 
-    #CONSOLE_CLS = True
-    if CONSOLE_CLS:
-        
-        # USED for that F... screen CLEAR!
-        # different ways to clear the console
-
-        print("\033[2J\033[1;1f")         # this instr. instead of the one below worked better on Win 8
-                                            # try to uncomment it and comment the one below [] os.system('cls') ], to compare                    
-        #os.system('cls')        # for Windows
-        # os.system('clear')    # for Linux/OS X
-
-    
-
     # Virtual screen array
     if PYGAME_DISPLAY:
         pxarray = pygame.PixelArray(app_screen)
@@ -1547,7 +1526,7 @@ while not done:
     # Control FPS if not 0
     #FPS = 800
 
-    if FPS:
+    if FPS!=0:
         deltaTime = clock.tick(FPS)
         #clock.tick_busy_loop(FPS)
 
@@ -1574,6 +1553,14 @@ while not done:
 
     # UPCYCLE loop for more emulator ticks in a main loop - increase the performance
     for k in range(2):
+        if CONSOLE_CLS:
+            # USED for that F... screen CLEAR!
+            # different ways to clear the console
+            print("\033[2J\033[1;1f")         # this instr. instead of the one below worked better on Win 8
+                                                # try to uncomment it and comment the one below [] os.system('cls') ], to compare                    
+            # os.system('cls')        # for Windows
+            # os.system('clear')    # for Linux/OS X
+
         chip8CPU.RUNcycle()
 
     #if float(time_passed)/1000 > 1/float(FPSrequired):
@@ -1585,7 +1572,7 @@ while not done:
         # print "1/float(FPSrequired):", 1/float(FPSrequired)
         
         
-        time_passed = 0
+        #time_passed = 0
         # print "CYCLE = 1"
     # else:
         # print "CYCLE = 0"

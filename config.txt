@@ -1,0 +1,22 @@
+[pygame]
+PYGAME_DISPLAY = True
+TEST_VRAM = False
+CONSOLE_CLS = False
+CONSOLE_DEBUG_SCREEN = False
+CONSOLE_DEBUG_MSG = False
+
+
+[console-game]
+PYGAME_DISPLAY = False
+TEST_VRAM = True
+CONSOLE_CLS = True
+CONSOLE_DEBUG_SCREEN = False
+CONSOLE_DEBUG_MSG = False
+
+
+[console-debug]
+PYGAME_DISPLAY = False     
+TEST_VRAM = False          
+CONSOLE_CLS = True
+CONSOLE_DEBUG_SCREEN = True
+CONSOLE_DEBUG_MSG = False
