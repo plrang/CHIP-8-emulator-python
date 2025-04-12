@@ -1,8 +1,6 @@
 <strong>CHIP 8 emulator Python 2.7 / Pygame - case study</strong>
 2016/2018/2021
 
-Watch the video, read more and get the documentation https://plrang.com/blog/chip8-emulator-making/
-
 <pre><code># Back to WIP - adding features
 # This is a working emulator, in that sense it's finished,
 # yet the code architecture, formatting , comments
